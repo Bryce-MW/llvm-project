@@ -2012,9 +2012,9 @@ the attributes are ignored on both branches.
 
 In a ``switch`` statement it's allowed to annotate multiple ``case`` labels
 or the ``default`` label with the same likelihood attribute. This makes
-* all labels without an attribute have a neutral likelihood,
-* all labels marked ``[[likely]]`` have an equally positive likelihood, and
-* all labels marked ``[[unlikely]]`` have an equally negative likelihood.
+- all labels without an attribute have a neutral likelihood,
+- all labels marked ``[[likely]]`` have an equally positive likelihood, and
+- all labels marked ``[[unlikely]]`` have an equally negative likelihood.
 The neutral likelihood is the more likely of path execution than the negative
 likelihood. The positive likelihood is the more likely of path of execution
 than the neutral likelihood.
