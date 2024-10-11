@@ -23,7 +23,8 @@ Introduction
 ============
 
 This page lists the command line arguments currently supported by the
-GCC-compatible ``clang`` and ``clang++`` drivers.
+``clang`` and ``clang++`` drivers. Most flags supported by GCC are
+also supported by these drivers but behaviour may not be identical.
 
 }];
 

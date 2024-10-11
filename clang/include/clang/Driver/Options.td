@@ -954,7 +954,7 @@ def Q : Flag<["-"], "Q">, IgnoredGCCCompat;
 def S : Flag<["-"], "S">, Flags<[NoXarchOption]>,
   Visibility<[ClangOption, CC1Option, FlangOption, FC1Option]>,
   Group<Action_Group>,
-  HelpText<"Only run preprocess and compilation steps">;
+  HelpText<"Only run preprocess and compilation steps (emit asssembly in text format)">;
 def T : JoinedOrSeparate<["-"], "T">, Group<T_Group>,
   MetaVarName<"<script>">, HelpText<"Specify <script> as linker script">;
 def U : JoinedOrSeparate<["-"], "U">, Group<Preprocessor_Group>,
@@ -987,7 +987,7 @@ defm invalid_constexpr : BoolWOption<"invalid-constexpr",
   Default<!strconcat("!", cpp23.KeyPath)>,
   NegFlag<SetFalse, [HelpHidden], [ClangOption, CC1Option], "Disable">,
   PosFlag<SetTrue, [HelpHidden], [ClangOption, CC1Option], "Enable">,
-  BothFlags<[], [ClangOption, CC1Option], " checking of constexpr function bodies for validity within a constant expression context">>;
+  BothFlags<[], [ClangOption, CC1Option], " checking of constexpr function bodies for validity within a constant expression context (disabled by default in C++23)">>;
 def Wl_COMMA : CommaJoined<["-"], "Wl,">, Visibility<[ClangOption, FlangOption]>,
   Flags<[LinkerInput, RenderAsInput]>,
   HelpText<"Pass the comma separated arguments in <arg> to the linker">,
@@ -996,7 +996,8 @@ def Wl_COMMA : CommaJoined<["-"], "Wl,">, Visibility<[ClangOption, FlangOption]>
 def Wno_nonportable_cfstrings : Joined<["-"], "Wno-nonportable-cfstrings">, Group<W_Group>,
   Visibility<[ClangOption, CC1Option]>;
 def Wnonportable_cfstrings : Joined<["-"], "Wnonportable-cfstrings">, Group<W_Group>,
-  Visibility<[ClangOption, CC1Option]>;
+  Visibility<[ClangOption, CC1Option]>,
+  HelpText<"Warn if constant CFString objects contain non-portable characters">;
 def Wp_COMMA : CommaJoined<["-"], "Wp,">,
   HelpText<"Pass the comma separated arguments in <arg> to the preprocessor">,
   MetaVarName<"<arg>">, Group<Preprocessor_Group>;
@@ -1046,7 +1047,7 @@ def z : Separate<["-"], "z">, Flags<[LinkerInput]>,
   HelpText<"Pass -z <arg> to the linker">, MetaVarName<"<arg>">,
   Group<Link_Group>;
 def offload_link : Flag<["--"], "offload-link">, Group<Link_Group>,
-  HelpText<"Use the new offloading linker to perform the link job.">;
+  HelpText<"Use the new offloading linker to perform the link job (required to link Cuda and HIP objects together).">;
 def Xlinker : Separate<["-"], "Xlinker">, Flags<[LinkerInput, RenderAsInput]>,
   HelpText<"Pass <arg> to the linker">, MetaVarName<"<arg>">,
   Group<Link_Group>;
@@ -1055,19 +1056,31 @@ def Xoffload_linker : JoinedAndSeparate<["-"], "Xoffload-linker">,
   MetaVarName<"<triple> <arg>">, Group<Link_Group>;
 def Xpreprocessor : Separate<["-"], "Xpreprocessor">, Group<Preprocessor_Group>,
   HelpText<"Pass <arg> to the preprocessor">, MetaVarName<"<arg>">;
-def X_Flag : Flag<["-"], "X">, Group<Link_Group>;
+def X_Flag : Flag<["-"], "X">, Group<Link_Group>,
+  HelpText<"Prefix for passing arguments to specific compilation steps (see -Xlinker, -Xclang, etc).">;
 // Used by some macOS projects. IgnoredGCCCompat is a misnomer since GCC doesn't allow it.
 def : Flag<["-"], "Xparser">, IgnoredGCCCompat;
 // FIXME -Xcompiler is misused by some ChromeOS packages. Remove it after a while.
 def : Flag<["-"], "Xcompiler">, IgnoredGCCCompat;
-def Z_Flag : Flag<["-"], "Z">, Group<Link_Group>;
-def all__load : Flag<["-"], "all_load">;
-def allowable__client : Separate<["-"], "allowable_client">;
-def ansi : Flag<["-", "--"], "ansi">, Group<CompileOnly_Group>;
-def arch__errors__fatal : Flag<["-"], "arch_errors_fatal">;
-def arch : Separate<["-"], "arch">, Flags<[NoXarchOption,TargetSpecific]>;
-def arch__only : Separate<["-"], "arch_only">;
-def autocomplete : Joined<["--"], "autocomplete=">;
+def Z_Flag : Flag<["-"], "Z">, Group<Link_Group>,
+  HelpText<"Passed to ld on macOS. Tells the linker not to use the standard search path for libraries and Frameworks.">;
+def all__load : Flag<["-"], "all_load">,
+  HelpText<"Load all members of all static archive libraries, not just those necessary.">;
+def allowable__client : Separate<["-"], "allowable_client">,
+  MetaVarName<"<name>">,
+  HelpText<"Restricts what can link against the dynamic library being created to <name>.">;
+def ansi : Flag<["-", "--"], "ansi">, Group<CompileOnly_Group>,
+  HelpText<"On Solaris, use strict ANSI mode for some C library functions. Causes values-Xc.o to be linked instead of values-Xa.o.">;
+def arch__errors__fatal : Flag<["-"], "arch_errors_fatal">,
+  HelpText<"Escalate to errors any warnings about inputs whose architecture does not match the -arch option (only used when compiling for iOS).">;
+def arch : Separate<["-"], "arch">, Flags<[NoXarchOption,TargetSpecific]>,
+  MetaVarName<"<architecture>">,
+  HelpText<"Can be specified when building for Darwin platforms to build fat binaries (binaries that contain machine code for multiple architectures). Can't be combined with -target">;
+def arch__only : Separate<["-"], "arch_only">,
+  MetaVarName<"<architecture>">,
+  HelpText<"Build a static library only for the specified `<architecture>` and ignore all other architectures in the files.">;
+def autocomplete : Joined<["--"], "autocomplete=">
+  HelpText<"">;
 def bind__at__load : Flag<["-"], "bind_at_load">;
 def bundle__loader : Separate<["-"], "bundle_loader">;
 def bundle : Flag<["-"], "bundle">;
